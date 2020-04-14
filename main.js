@@ -20,12 +20,15 @@ const SHIP_INV_DUR = 3; // duration of the ship's invincibility in seconds
 const SHIP_SIZE = 30; // ship height in pixels
 const SHIP_THRUST = 5; // acceleration of the ship in pixels per second per second
 const TURN_SPEED = 360; // turn speed in degrees per second
-const SHOW_BOUNDING = false; // show or hide collision bounding
-const SHOW_CENTER_DOT = false; // show or hide ship's center dot
-const SOUND_ON = true; // toggle the sounds on/off
-const MUSIC_ON = true; // toggle the music on/off
 const TEXT_FADE_TIME = 2.5; // text fade time in seconds
 const TEXT_SIZE = 40; // text font height in pixels
+
+// developer flags
+const AUTOMATION_ON = true;
+const SOUND_ON = false; // toggle the sounds on/off
+const MUSIC_ON = false; // toggle the music on/off
+const SHOW_BOUNDING = false; // show or hide collision bounding
+const SHOW_CENTER_DOT = false; // show or hide ship's center dot
 
 /** @type {HTMLCanvasElement} */
 let canv = document.getElementById("gameCanvas");
@@ -44,6 +47,32 @@ let roidsLeft, roidsTotal;
 // set up game parameters
 let level, lives, roids, score, scoreHigh, ship, text, textAlpha;
 newGame();
+
+// set up the neural network
+if (AUTOMATION_ON) {
+    // TODO neural network
+
+    let m0 = new Matrix(2, 3, [
+        [2, 1, -1],
+        [4, 3, 0]
+    ]);
+    let m1 = new Matrix(2, 3, [
+        [0, 1, -1],
+        [2, -3, 0]
+    ]);
+    let m2 = new Matrix(2, 2, [
+        [1, -1],
+        [3, 0]
+    ]);
+    // m0.randomWeights();
+    let arr = [4, 5, 6, 7];
+    // console.log(arr);
+    console.table(m1.data);
+    console.table(Matrix.transpose(m1).data);
+    // console.table(m2.data);
+    // console.table(m1.data);
+    // console.table(Matrix.dot(m2, m1).data);
+}
 
 // set up event handlers
 document.addEventListener("keydown", keyDown);
@@ -143,7 +172,7 @@ function gameOver() {
 
 function keyDown(/**@type {KeyboardEvent} */ ev) {
 
-    if (ship.dead) {
+    if (ship.dead || AUTOMATION_ON) {
         return;
     }
 
@@ -165,7 +194,7 @@ function keyDown(/**@type {KeyboardEvent} */ ev) {
 
 function keyUp(/**@type {KeyboardEvent} */ ev) {
 
-    if (ship.dead) {
+    if (ship.dead || AUTOMATION_ON) {
         return;
     }
 
@@ -325,6 +354,11 @@ function update() {
 
     let blinkOn = ship.blinkNum % 2 == 0;
     let exploding = ship.explodeTime > 0;
+
+    // use the neural network to rotate the ship and shoot
+    if (AUTOMATION_ON) {
+        // TODO control ship
+    }
 
     // tick the music
     music.tick();
